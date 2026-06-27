@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revomons</title>
+    <!-- tailwind handling the visual system -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- chartjs drawing our marketplace asset trends -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { background-color: #1e1e1e; }
@@ -15,9 +17,11 @@
 </head>
 <body class="text-zinc-200 min-h-screen font-sans antialiased transition-colors duration-300">
 
+    <!-- global application navigation header -->
     <nav class="bg-[#262626] border-b-2 border-zinc-400 px-6 py-2 flex items-center justify-between shadow-lg relative z-10">
         <div class="flex items-center gap-3">
             <div class="flex items-center cursor-pointer active:scale-95 transition-transform duration-100" onclick="goHome()">
+                <!-- pointing directly to your local logo file asset -->
                 <img src="image.png" alt="Revomons Logo" class="h-8 w-auto object-contain">
             </div>
             <div class="hidden md:flex gap-4 text-xs font-bold text-zinc-400 uppercase tracking-wider ml-6">
@@ -31,6 +35,7 @@
         </div>
     </nav>
 
+    <!-- index landing grid system -->
     <div id="catalogSection" class="transition-all duration-300 ease-in-out transform">
         <header class="max-w-7xl mx-auto px-4 pt-6">
             <div class="bg-[#262626] border border-zinc-800 p-4 rounded flex flex-col sm:flex-row gap-4 items-center justify-between shadow-md">
@@ -42,10 +47,12 @@
 
         <main class="max-w-7xl mx-auto p-4">
             <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                </div>
+                <!-- javascript injects compiled catalog grid arrays straight into here -->
+            </div>
         </main>
     </div>
 
+    <!-- absolute profile deep dive screen -->
     <div id="detailSection" class="hidden max-w-5xl mx-auto p-4 pt-6 transition-all duration-300 ease-in-out transform translate-y-4 opacity-0">
         <button onclick="goHome()" class="mb-4 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-all duration-200 flex items-center gap-1 cursor-pointer hover:-translate-x-1">
             ← Back to Item Values
@@ -53,6 +60,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             
+            <!-- left side viewport: asset graphic presentation card -->
             <div class="md:col-span-1 rev-dark border rev-border rounded p-4 flex flex-col items-center justify-center shadow-lg">
                 <div class="w-full bg-[#161616] border rev-border rounded-lg aspect-square flex items-center justify-center mb-4 p-4 shadow-inner group">
                     <div id="itemPageAcronymImg" class="text-4xl font-mono font-black tracking-tight text-zinc-600 uppercase select-none group-hover:scale-110 transition-transform duration-300"></div>
@@ -61,8 +69,10 @@
                 <span id="itemPageAcronym" class="mt-1 font-mono text-xs px-2 py-0.5 bg-[#161616] border rev-border text-zinc-400 rounded uppercase"></span>
             </div>
 
+            <!-- right side data panels: analytical valuation and documentation -->
             <div class="md:col-span-2 space-y-4">
                 
+                <!-- quantitative assessment telemetry metric grid -->
                 <div class="grid grid-cols-3 gap-2">
                     <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center hover:bg-[#2d2d2d] transition-colors duration-200">
                         <div class="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Item Value</div>
@@ -78,13 +88,25 @@
                     </div>
                 </div>
 
+                <!-- line graphing rendering system frame -->
+                <div class="rev-dark border rev-border rounded p-4 shadow-lg">
+                    <h3 class="text-xs uppercase font-extrabold tracking-widest text-zinc-400 mb-3 flex items-center gap-1.5">
+                        <span>📊</span> Historical Value Index
+                    </h3>
+                    <div class="h-48 w-full relative">
+                        <canvas id="valueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- biographical framework documentation and descriptive analysis -->
                 <div class="rev-dark border rev-border rounded p-5 shadow-lg">
                     <h3 class="text-xs uppercase font-extrabold tracking-widest text-zinc-400 border-b rev-border pb-2 mb-3">Item Biography & Market Analysis</h3>
                     <p id="itemPageReason" class="text-xs text-zinc-300 leading-relaxed font-sans bg-[#161616] border rev-border p-4 rounded-lg shadow-inner">
-                        Biography text.
+                        Biography content node.
                     </p>
                 </div>
 
+                <!-- system deployment constraints tag box -->
                 <div class="bg-zinc-900/30 border border-zinc-800/80 p-3 rounded flex items-center justify-between text-[11px] font-mono text-zinc-500">
                     <div>Asset Category: <span class="text-zinc-400">Arcane Booster Set</span></div>
                     <div class="text-red-400/80 font-bold uppercase tracking-widest animate-pulse">⚠️ Distribution Locked</div>
@@ -94,14 +116,17 @@
         </div>
     </div>
 
+    <!-- default master platform footer layout -->
     <footer class="text-center py-12 text-xs text-zinc-600 font-mono tracking-tight">
-        © 2026 Revomons.
+        © 2026 Revomons
     </footer>
 
+    <!-- MAIN CORE PROGRAM DATA LOGIC -->
     <script>
+        // globally caching the interactive graph layout frame
         let chartInstance = null;
 
-        // FIXED: The database list itself uses proper capitalization. All code comments are casual/lowercase.
+        // central item list directory database array
         const itemsList = [
             { 
                 name: "Arcane Assassin's Mask", 
@@ -109,8 +134,8 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "you could only get this mask if you boosted the server right when the site launched. since it was only up for a single week, barely anyone has it. completely untradeable for now.",
-                history: [0, 0, 0, 0, 0]
+                reason: "Boosters item, Untradeable, basically Priceless",
+                history: [100, 100, 100, 100, 100]
             },
             { 
                 name: "Arcane 360", 
@@ -118,8 +143,8 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "this was a reward given out to the early group of server boosters. super limited acquisition window means it's basically impossible to find. untradeable.",
-                history: [0, 0, 0, 0, 0] 
+                reason: "Boosters item, Untradeable, basically Priceless",
+                history: [100, 100, 100, 100, 100] 
             },
             { 
                 name: "Lord of the Arcaneration", 
@@ -127,8 +152,8 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "hype flex item for the core people who backed the platform during deployment phase. only around for seven days at launch, so it's locked forever. untradeable.",
-                history: [0, 0, 0, 0, 0]
+                reason: "Boosters item, Untradeable, basically Priceless",
+                history: [100, 100, 100, 100, 100]
             },
             { 
                 name: "Arcane Fedora", 
@@ -136,8 +161,8 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "a clean, old-school style fedora meant to show off tier-one network status. you had to boost during opening week or you missed out entirely. untradeable.",
-                history: [0, 0, 0, 0, 0]
+                reason: "Boosters item, Untradeable, basically Priceless",
+                history: [100, 100, 100, 100, 100]
             },
             { 
                 name: "Arcane Domino Crown", 
@@ -145,12 +170,12 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "definitely the biggest trophy item out of the whole booster launch line. designed to look like the crazy rare classic catalogs. absolutely untradeable.",
-                history: [0, 0, 0, 0, 0]
+                reason: "Boosters item, Untradeable, basically Priceless",
+                history: [100, 100, 100, 100, 100]
             }
         ];
 
-        // Renders items on screen
+        // builds the master marketplace landing panel dashboard layouts
         function renderCatalog(filteredItems) {
             const grid = document.getElementById("catalogGrid");
             grid.innerHTML = "";
@@ -179,7 +204,7 @@
             });
         }
 
-        // DRAW/UPDATE DYNAMIC GRAPH CHART SYSTEM
+        // paints the timeline vector graph lines onto the detail dashboard
         function buildGraph(itemHistoryData) {
             const ctx = document.getElementById('valueChart').getContext('2d');
             if (chartInstance) { chartInstance.destroy(); }
@@ -188,7 +213,7 @@
                 data: {
                     labels: ['Feb 2026', 'Mar 2026', 'Apr 2026', 'May 2026', 'Jun 2026'],
                     datasets: [{
-                        label: 'Value Trend',
+                        label: 'Value Index',
                         data: itemHistoryData,
                         borderColor: '#a1a1aa',
                         backgroundColor: 'rgba(161, 161, 170, 0.05)',
@@ -210,6 +235,7 @@
             });
         }
 
+        // custom dynamic application frame routing controllers
         function navigateToItem(acronym) {
             const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?item=' + acronym;
             window.history.pushState({ path: newUrl }, '', newUrl);
@@ -222,6 +248,7 @@
             checkRouting();
         }
 
+        // validates client urls to process instant interface rendering state changes
         function checkRouting() {
             const urlParams = new URLSearchParams(window.location.search);
             const itemQuery = urlParams.get('item');
@@ -262,7 +289,7 @@
             }, 200);
         }
 
-        // dynamic live search filter calculations
+        // runs realtime system searches across the indexed database array
         document.getElementById("searchBar").addEventListener("input", (e) => {
             const searchString = e.target.value.toLowerCase();
             const matchingItems = itemsList.filter(item => 
@@ -271,10 +298,10 @@
             renderCatalog(matchingItems);
         });
 
-        // hooks into web browser back and forward mouse commands cleanly
+        // maps client device hardware history steps to process back/forward events
         window.addEventListener('popstate', checkRouting);
         
-        // system kickstarter runs on fresh loads
+        // boots up the platform architecture parameters on initial setup run
         document.getElementById("itemCount").innerText = itemsList.length;
         renderCatalog(itemsList);
         checkRouting();
