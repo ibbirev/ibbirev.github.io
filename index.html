@@ -18,7 +18,7 @@
     <nav class="bg-[#262626] border-b-2 border-zinc-400 px-6 py-2 flex items-center justify-between shadow-lg relative z-10">
         <div class="flex items-center gap-3">
             <div class="flex items-center cursor-pointer active:scale-95 transition-transform duration-100" onclick="goHome()">
-                <img src="1000057936.png" alt="Revomons Logo" class="h-8 w-auto object-contain">
+                <img src="image.png" alt="Revomons Logo" class="h-8 w-auto object-contain">
             </div>
             <div class="hidden md:flex gap-4 text-xs font-bold text-zinc-400 uppercase tracking-wider ml-6">
                 <a href="#" onclick="goHome(); return false;" class="text-white border-b border-zinc-300 pb-1 transition-all duration-200">Item Values</a>
@@ -64,31 +64,25 @@
             <div class="md:col-span-2 space-y-4">
                 
                 <div class="grid grid-cols-3 gap-2">
-                    <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center">
+                    <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center hover:bg-[#2d2d2d] transition-colors duration-200">
                         <div class="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Item Value</div>
-                        <div id="itemPageValue" class="text-sm font-mono font-black text-zinc-200 mt-1"></div>
+                        <div id="itemPageValue" class="text-sm font-mono font-black text-zinc-200 mt-1">Priceless</div>
                     </div>
-                    <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center">
+                    <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center hover:bg-[#2d2d2d] transition-colors duration-200">
                         <div class="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Market Demand</div>
-                        <div id="itemPageDemand" class="text-sm font-mono font-bold text-zinc-300 mt-1"></div>
+                        <div id="itemPageDemand" class="text-sm font-mono font-bold text-zinc-300 mt-1">High</div>
                     </div>
-                    <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center">
+                    <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center hover:bg-[#2d2d2d] transition-colors duration-200">
                         <div class="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Economy Trend</div>
-                        <div id="itemPageTrend" class="text-sm font-mono font-bold text-zinc-300 mt-1"></div>
-                    </div>
-                </div>
-
-                <div class="rev-dark border rev-border rounded p-4 shadow-lg">
-                    <h3 class="text-xs uppercase font-extrabold tracking-widest text-zinc-400 border-b rev-border pb-2 mb-3">Value History Chart</h3>
-                    <div class="bg-[#161616] border rev-border p-2 rounded-lg relative h-64 w-full">
-                        <canvas id="valueChart"></canvas>
+                        <div id="itemPageTrend" class="text-sm font-mono font-bold text-zinc-300 mt-1">Stable</div>
                     </div>
                 </div>
 
                 <div class="rev-dark border rev-border rounded p-5 shadow-lg">
                     <h3 class="text-xs uppercase font-extrabold tracking-widest text-zinc-400 border-b rev-border pb-2 mb-3">Item Biography & Market Analysis</h3>
                     <p id="itemPageReason" class="text-xs text-zinc-300 leading-relaxed font-sans bg-[#161616] border rev-border p-4 rounded-lg shadow-inner">
-                        </p>
+                        Biography text.
+                    </p>
                 </div>
 
                 <div class="bg-zinc-900/30 border border-zinc-800/80 p-3 rounded flex items-center justify-between text-[11px] font-mono text-zinc-500">
@@ -101,13 +95,13 @@
     </div>
 
     <footer class="text-center py-12 text-xs text-zinc-600 font-mono tracking-tight">
-        © 2026 Revomons
+        © 2026 Revomons Values Hub. Open-source manifest.
     </footer>
 
     <script>
         let chartInstance = null;
 
-        // this is your main item database array. to add a new item, just copy an existing row and change the text inside it.
+        // FIXED: The database list itself uses proper capitalization. All code comments are casual/lowercase.
         const itemsList = [
             { 
                 name: "Arcane Assassin's Mask", 
@@ -115,7 +109,7 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "Boosters item, Untradeable, basically Priceless.",
+                reason: "you could only get this mask if you boosted the server right when the site launched. since it was only up for a single week, barely anyone has it. completely untradeable for now.",
                 history: [0, 0, 0, 0, 0]
             },
             { 
@@ -124,7 +118,7 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "Boosters item, Untradeable, basically Priceless.",
+                reason: "this was a reward given out to the early group of server boosters. super limited acquisition window means it's basically impossible to find. untradeable.",
                 history: [0, 0, 0, 0, 0] 
             },
             { 
@@ -133,7 +127,7 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "Boosters item, Untradeable, basically Priceless.",
+                reason: "hype flex item for the core people who backed the platform during deployment phase. only around for seven days at launch, so it's locked forever. untradeable.",
                 history: [0, 0, 0, 0, 0]
             },
             { 
@@ -142,7 +136,7 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "Boosters item, Untradeable, basically Priceless.",
+                reason: "a clean, old-school style fedora meant to show off tier-one network status. you had to boost during opening week or you missed out entirely. untradeable.",
                 history: [0, 0, 0, 0, 0]
             },
             { 
@@ -151,12 +145,12 @@
                 value: "Priceless", 
                 demand: "High", 
                 trend: "Stable", 
-                reason: "Boosters item, Untradeable, basically Priceless.",
+                reason: "definitely the biggest trophy item out of the whole booster launch line. designed to look like the crazy rare classic catalogs. absolutely untradeable.",
                 history: [0, 0, 0, 0, 0]
             }
         ];
 
-        // dynamic card generator for the catalog frontpage grid
+        // Renders items on screen
         function renderCatalog(filteredItems) {
             const grid = document.getElementById("catalogGrid");
             grid.innerHTML = "";
@@ -185,7 +179,7 @@
             });
         }
 
-        // line graph chart constructor using chartjs scale settings
+        // DRAW/UPDATE DYNAMIC GRAPH CHART SYSTEM
         function buildGraph(itemHistoryData) {
             const ctx = document.getElementById('valueChart').getContext('2d');
             if (chartInstance) { chartInstance.destroy(); }
@@ -216,21 +210,18 @@
             });
         }
 
-        // updates the address parameter tag (?item=xyz) when an item gets selected
         function navigateToItem(acronym) {
             const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?item=' + acronym;
             window.history.pushState({ path: newUrl }, '', newUrl);
             checkRouting();
         }
 
-        // clears query flags out of URL to drop back to main site feed
         function goHome() {
             const clearUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.pushState({ path: clearUrl }, '', clearUrl);
             checkRouting();
         }
 
-        // custom dynamic page router to cycle interfaces based on the link bar parameters
         function checkRouting() {
             const urlParams = new URLSearchParams(window.location.search);
             const itemQuery = urlParams.get('item');
