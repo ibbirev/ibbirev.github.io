@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revomons!</title>
+    <!-- styling layout with tailwind -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- drawing market trend charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
@@ -16,6 +18,7 @@
 </head>
 <body class="text-zinc-200 min-h-screen font-sans antialiased transition-colors duration-300">
 
+    <!-- top navigation bar -->
     <nav class="bg-[#262626] border-b-2 border-zinc-400 px-6 py-2 flex items-center justify-between shadow-lg relative z-10">
         <div class="flex items-center gap-3">
             <div class="flex items-center cursor-pointer active:scale-95 transition-transform duration-100" onclick="goHome()">
@@ -34,6 +37,7 @@
         </div>
     </nav>
 
+    <!-- item catalog search/view section -->
     <div id="catalogSection" class="transition-all duration-300 ease-in-out transform">
         <header class="max-w-7xl mx-auto px-4 pt-6">
             <div class="bg-[#262626] border border-zinc-800 p-4 rounded flex flex-col sm:flex-row gap-4 items-center justify-between shadow-md">
@@ -45,9 +49,11 @@
 
         <main class="max-w-7xl mx-auto p-4">
             <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                </div>
+                <!-- dynamic content loads here -->
+            </div>
         </main>
 
+        <!-- community message board -->
         <section id="marketplaceForum" class="max-w-7xl mx-auto px-4 py-8 scroll-mt-6">
             <div class="border-t rev-border pt-6">
                 <div class="bg-[#262626] border border-zinc-800 rounded-lg p-6 shadow-xl">
@@ -64,23 +70,29 @@
                         </div>
                     </div>
                     
+                    <!-- Secure login screen layout -->
                     <div id="revsimLockCard" class="bg-[#1a1a1a] p-6 rounded border rev-border text-center flex flex-col items-center justify-center min-h-[300px]">
                         <div class="text-2xl mb-2">🛡️</div>
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-300">Discord Whitelist Required</h3>
-                        <p class="text-[11px] text-zinc-500 max-w-md mt-1 mb-4 font-mono">
-                            To view or post trades, enter your whitelisted Discord username below. If you're not on the list, DM an administrator on Discord to get added!
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-300">Protected Portal</h3>
+                        <p class="text-[11px] text-zinc-500 max-w-md mt-1 mb-6 font-mono">
+                            To protect against user identity spoofing, please log in with your whitelisted Discord username and your assigned personal passkey token.
                         </p>
                         
-                        <div class="flex flex-col sm:flex-row gap-2 w-full max-w-sm justify-center items-center">
-                            <input type="text" id="discordUsernameInput" placeholder="Discord Username (e.g., wumpus)" 
-                                   class="bg-[#262626] border rev-border rounded px-3 py-1.5 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none w-56 text-center font-mono">
-                            <button onclick="verifyDiscordUser()" class="bg-zinc-200 hover:bg-white text-zinc-900 text-xs font-bold uppercase px-4 py-1.5 rounded tracking-wider cursor-pointer active:scale-95 transition-all w-24">
-                                Connect
+                        <div class="flex flex-col gap-3 w-full max-w-xs justify-center items-center">
+                            <input type="text" id="discordUsernameInput" placeholder="Discord Username (lowercase)" 
+                                   class="w-full bg-[#262626] border rev-border rounded px-3 py-2 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none text-center font-mono">
+                            
+                            <input type="password" id="discordPasskeyInput" placeholder="Personal Passkey Code" 
+                                   class="w-full bg-[#262626] border rev-border rounded px-3 py-2 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none text-center font-mono">
+                            
+                            <button onclick="verifyDiscordCredentials()" class="mt-2 w-full bg-zinc-200 hover:bg-white text-zinc-900 text-xs font-bold uppercase px-4 py-2 rounded tracking-wider cursor-pointer active:scale-95 transition-all">
+                                Access Trading Hub
                             </button>
                         </div>
-                        <div id="verifyError" class="text-[10px] text-red-400 font-mono mt-2 hidden"></div>
+                        <div id="verifyError" class="text-[10px] text-red-400 font-mono mt-3 hidden"></div>
                     </div>
 
+                    <!-- active trading layout unlocked after verification -->
                     <div id="revsimChatCard" class="hidden space-y-4">
                         <div class="bg-[#1a1a1a] p-4 rounded border rev-border max-h-64 overflow-y-auto space-y-2 font-mono text-xs" id="chatLogsContainer">
                             <div class="text-zinc-600 italic text-center py-4">No active offers running. Be the first to post a trade request!</div>
@@ -101,6 +113,7 @@
         </section>
     </div>
 
+    <!-- item detailed view section -->
     <div id="detailSection" class="hidden max-w-5xl mx-auto p-4 pt-6 transition-all duration-300 ease-in-out transform translate-y-4 opacity-0">
         <button onclick="goHome()" class="mb-4 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-all duration-200 flex items-center gap-1 cursor-pointer hover:-translate-x-1">
             ← Back to Item Values
@@ -154,16 +167,18 @@
         © 2026 Revomons
     </footer>
 
+    <!-- engine logic handlers -->
     <script>
         let chartInstance = null;
         let verifiedRevsimUser = null;
 
-        // 📝 DISCORD WHITELIST: Add your username and your friends' Discord handles here!
-        const APPROVED_DISCORD_USERS = [
-            "your_discord_username",
-            "friend_username_1",
-            "trader_pro"
-        ];
+        // 📝 USER REGISTRY MANAGER: Pair exact Discord handles with specific, unique custom keys.
+        // To add a new person from your phone, just copy a line inside the curly brackets.
+        const ACCESS_REGISTRY = {
+            "your_discord_username": "OWNER-PASS-789",
+            "friend_username_1": "ICE-CROWN-22",
+            "trader_pro": "TRADER-KEY-404"
+        };
 
         const itemsList = [
             { 
@@ -177,30 +192,33 @@
             }
         ];
 
-        // Validating Discord credentials against the internal client registry list
-        function verifyDiscordUser() {
-            const userInput = document.getElementById("discordUsernameInput").value.trim();
+        // Validating user credentials safely via the key pairing map
+        function verifyDiscordCredentials() {
+            const userInput = document.getElementById("discordUsernameInput").value.trim().toLowerCase();
+            const passkeyInput = document.getElementById("discordPasskeyInput").value.trim();
             const errorDiv = document.getElementById("verifyError");
             
-            if(!userInput) {
-                showError("Please enter a Discord username.");
+            if(!userInput || !passkeyInput) {
+                showError("Both fields are mandatory to clear identification protocols.");
                 return;
             }
 
-            // Normalizes casing so typos don't break verification matches
-            const matchFound = APPROVED_DISCORD_USERS.some(
-                user => user.toLowerCase() === userInput.toLowerCase()
-            );
+            // Step 1: Ensure the user's handle matches something inside the internal configuration object
+            if (!ACCESS_REGISTRY.hasOwnProperty(userInput)) {
+                showError("Access Denied: Username not found on system registry.");
+                return;
+            }
 
-            if(!matchFound) {
-                showError("Username not found on the marketplace whitelist. Ask an admin to add you!");
+            // Step 2: Validate the user's unique custom key against their handle index
+            if (ACCESS_REGISTRY[userInput] !== passkeyInput) {
+                showError("Access Denied: Invalid passkey token matching this identity profile.");
                 return;
             }
             
             errorDiv.classList.add("hidden");
             verifiedRevsimUser = `@${userInput}`;
             
-            // switch states from locked to unlocked layout instantly
+            // switch layout display screens smoothly
             document.getElementById("revsimLockCard").classList.add("hidden");
             document.getElementById("revsimChatCard").classList.remove("hidden");
             
