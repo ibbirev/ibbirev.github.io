@@ -8,6 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- drawing market trend charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase dynamic database CDN library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         body { background-color: #1e1e1e; }
@@ -61,9 +63,9 @@
                     <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <div>
                             <h2 class="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                                <span>💬</span> Discord Verified Trading Board
+                                <span>💬</span> Supabase Live Trading Board
                             </h2>
-                            <p class="text-xs text-zinc-500 font-mono mt-1">Access restricted to whitelisted Discord community members.</p>
+                            <p class="text-xs text-zinc-500 font-mono mt-1">Real-time sync. Access restricted via custom whitelist token keys.</p>
                         </div>
                         <div id="verificationStatusTag" class="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-900">
                             Status: Locked
@@ -75,7 +77,7 @@
                         <div class="text-2xl mb-2">🛡️</div>
                         <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-300">Protected Portal</h3>
                         <p class="text-[11px] text-zinc-500 max-w-md mt-1 mb-6 font-mono">
-                            To protect against user identity spoofing, please log in with your whitelisted Discord username and your assigned personal passkey token.
+                            To protect against identity spoofing, please log in with your whitelisted Discord username and your assigned personal passkey token.
                         </p>
                         
                         <div class="flex flex-col gap-3 w-full max-w-xs justify-center items-center">
@@ -95,7 +97,7 @@
                     <!-- active trading layout unlocked after verification -->
                     <div id="revsimChatCard" class="hidden space-y-4">
                         <div class="bg-[#1a1a1a] p-4 rounded border rev-border max-h-64 overflow-y-auto space-y-2 font-mono text-xs" id="chatLogsContainer">
-                            <div class="text-zinc-600 italic text-center py-4">No active offers running. Be the first to post a trade request!</div>
+                            <div class="text-zinc-600 italic text-center py-4">Connecting to live cloud feed...</div>
                         </div>
 
                         <div class="bg-[#1e1e1e] p-3 rounded border rev-border flex items-center gap-2">
@@ -171,19 +173,23 @@
     <script>
         let chartInstance = null;
         let verifiedRevsimUser = null;
+        let _supabaseClient = null;
 
-        // 📝 USER REGISTRY MANAGER: Pair exact Discord handles with specific, unique custom keys.
-        // To add a new person from your phone, just copy a line inside the curly brackets.
+        // ⚙️ INITIALIZE SUPABASE: Paste your specific credentials here!
+        const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+        const SUPABASE_ANON_KEY = "YOUR_ANON_PUBLIC_KEY";
+
+        // 📝 USER REGISTRY MANAGER: Pair exact handles with specific custom keys.
         const ACCESS_REGISTRY = {
-            "ibbi": "REVO-MANS",
             "zippity": "REV-0-MONS",
+            "friend_username_1": "REVO-MANS",
             "trader_pro": "REVOMONEY"
         };
 
         const itemsList = [
             { 
                 name: "The Ice Crown", 
-                acronym: "TIC", 
+                acronym: "IC", 
                 value: "10,000", 
                 demand: "Unknown/High", 
                 trend: "Unknown/Stable", 
@@ -191,6 +197,11 @@
                 history: [100, 100, 100, 100, 10000]
             }
         ];
+
+        // Connect connection pipelines to the database
+        if (SUPABASE_URL !== "https://YOUR_PROJECT_ID.supabase.co") {
+            _supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
 
         // Validating user credentials safely via the key pairing map
         function verifyDiscordCredentials() {
@@ -203,13 +214,11 @@
                 return;
             }
 
-            // Step 1: Ensure the user's handle matches something inside the internal configuration object
             if (!ACCESS_REGISTRY.hasOwnProperty(userInput)) {
                 showError("Access Denied: Username not found on system registry.");
                 return;
             }
 
-            // Step 2: Validate the user's unique custom key against their handle index
             if (ACCESS_REGISTRY[userInput] !== passkeyInput) {
                 showError("Access Denied: Invalid passkey token matching this identity profile.");
                 return;
@@ -218,7 +227,6 @@
             errorDiv.classList.add("hidden");
             verifiedRevsimUser = `@${userInput}`;
             
-            // switch layout display screens smoothly
             document.getElementById("revsimLockCard").classList.add("hidden");
             document.getElementById("revsimChatCard").classList.remove("hidden");
             
@@ -227,7 +235,10 @@
             statusTag.className = "text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-green-950 text-green-400 border border-green-900";
             
             document.getElementById("chatSenderBadge").innerText = verifiedRevsimUser;
-            loadNativeMessages();
+            
+            // Connect live sync triggers
+            loadCloudMessages();
+            listenToLiveUpdates();
         }
 
         function showError(msg) {
@@ -236,11 +247,38 @@
             errorDiv.classList.remove("hidden");
         }
 
-        // managing message display and loading locally in browser storage
-        function loadNativeMessages() {
+        // Pull down historical message nodes from Supabase
+        async function loadCloudMessages() {
+            if (!_supabaseClient) return;
+            
+            const { data, error } = await _supabaseClient
+                .from('market_chats')
+                .select('*')
+                .order('id', { ascending: true })
+                .limit(40);
+                
+            if (error) {
+                console.error("Database fetch exception:", error);
+                return;
+            }
+            
+            renderMessagesToView(data || []);
+        }
+
+        // Setup a live subscription channel to update when anyone posts a message
+        function listenToLiveUpdates() {
+            if (!_supabaseClient) return;
+            
+            _supabaseClient
+                .channel('realtime_market')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'market_chats' }, payload => {
+                    loadCloudMessages(); // reload and paint logs instantly when changes occur
+                })
+                .subscribe();
+        }
+
+        function renderMessagesToView(logs) {
             const container = document.getElementById("chatLogsContainer");
-            const savedData = localStorage.getItem("revsim_local_trades");
-            const logs = savedData ? JSON.parse(savedData) : [];
             
             if(logs.length === 0) {
                 container.innerHTML = `<div class="text-zinc-600 italic text-center py-4">No active offers running. Be the first to post a trade request!</div>`;
@@ -259,27 +297,29 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        function submitNativeMessage() {
+        // Push chat payload up to the cloud database
+        async function submitNativeMessage() {
             const input = document.getElementById("chatMessageInput");
             const textContent = input.value.trim();
-            if(!textContent || !verifiedRevsimUser) return;
-            
-            const savedData = localStorage.getItem("revsim_local_trades");
-            const logs = savedData ? JSON.parse(savedData) : [];
+            if(!textContent || !verifiedRevsimUser || !_supabaseClient) return;
             
             const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            logs.push({
-                sender: verifiedRevsimUser,
-                text: textContent,
-                time: timestamp
-            });
             
-            localStorage.setItem("revsim_local_trades", JSON.stringify(logs));
+            const { error } = await _supabaseClient
+                .from('market_chats')
+                .insert([
+                    { sender: verifiedRevsimUser, text: textContent, time: timestamp }
+                ]);
+                
+            if (error) {
+                alert("Message dropped: Database integration error.");
+                console.error(error);
+                return;
+            }
+            
             input.value = "";
-            loadNativeMessages();
         }
 
-        // listen for enter button keys inside the entry field
         document.getElementById("chatMessageInput").addEventListener("keypress", function(e) {
             if(e.key === 'Enter') submitNativeMessage();
         });
