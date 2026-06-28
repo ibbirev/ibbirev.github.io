@@ -205,6 +205,17 @@
                 
                 const htmlContent = await response.text();
                 
+                // Print out the exact page markup retrieved so we can inspect firewall response blocks
+                console.log("--- RAW SCRAPED HTML START ---");
+                console.log(htmlContent);
+                console.log("--- RAW SCRAPED HTML END ---");
+
+                // Intercept and flag if Cloudflare firewall rules block page collection
+                if (htmlContent.includes("cloudflare") || htmlContent.includes("Just a moment...")) {
+                    showError("Verification blocked by revsim.xyz security (Cloudflare protection). The proxy server can't look inside your profile data.");
+                    return;
+                }
+                
                 // look for the unique verification string anywhere in the profile data
                 if (htmlContent.includes("REVSIM-MARKET-2026")) {
                     verifiedRevsimUser = `Revsim User #${userId}`;
