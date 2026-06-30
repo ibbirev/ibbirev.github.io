@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <style>
         body { background-color: #1e1e1e; }
         .rev-dark { background-color: #2a2a2a; }
@@ -27,7 +26,6 @@
                 <a href="#marketplaceForum" class="hover:text-zinc-200 transition-colors duration-200">💬 Trading Forums</a>
             </div>
         </div>
-        
         <div class="flex items-center gap-3">
             <div class="text-xs font-mono bg-[#161616] px-3 py-1 rounded text-zinc-400 border border-zinc-800">
                 Items Tracked: <span id="itemCount" class="text-zinc-300 font-bold">0</span>
@@ -39,418 +37,100 @@
         <header class="max-w-7xl mx-auto px-4 pt-6">
             <div class="bg-[#262626] border border-zinc-800 p-4 rounded flex flex-col sm:flex-row gap-4 items-center justify-between shadow-md">
                 <h1 class="text-sm font-black uppercase text-zinc-400 tracking-wider">📈 Item Registry</h1>
-                <input type="text" id="searchBar" placeholder="Search catalog by name or acronym..." 
-                       class="w-full sm:w-80 bg-[#161616] border rev-border rounded px-3 py-1.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400 transition-all duration-200">
+                <input type="text" id="searchBar" placeholder="Search catalog by name..." class="w-full sm:w-80 bg-[#161616] border rev-border rounded px-3 py-1.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400 transition-all duration-200">
             </div>
         </header>
-
         <main class="max-w-7xl mx-auto p-4">
-            <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                </div>
+            <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
         </main>
-
         <section id="marketplaceForum" class="max-w-7xl mx-auto px-4 py-8 scroll-mt-6">
             <div class="border-t rev-border pt-6">
                 <div class="bg-[#262626] border border-zinc-800 rounded-lg p-6 shadow-xl">
-                    
-                    <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <div>
-                            <h2 class="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-                                <span>💬</span> Supabase Live Trading Board
-                            </h2>
-                            <p class="text-xs text-zinc-500 font-mono mt-1">Real-time sync. Access granted dynamically via Discord bot `/register` command.</p>
-                        </div>
-                        <div id="verificationStatusTag" class="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-900">
-                            Status: Locked
-                        </div>
-                    </div>
-                    
                     <div id="revsimLockCard" class="bg-[#1a1a1a] p-6 rounded border rev-border text-center flex flex-col items-center justify-center min-h-[300px]">
-                        <div class="text-2xl mb-2">🛡️</div>
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-300">Protected Portal</h3>
-                        <p class="text-[11px] text-zinc-500 max-w-md mt-1 mb-6 font-mono">
-                            Please verify identity by entering your exact Discord username and the passkey generated from the bot command.
-                        </p>
-                        
-                        <div class="flex flex-col gap-3 w-full max-w-xs justify-center items-center">
-                            <input type="text" id="discordUsernameInput" placeholder="Discord Username (lowercase)" 
-                                   class="w-full bg-[#262626] border rev-border rounded px-3 py-2 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none text-center font-mono">
-                            
-                            <input type="password" id="discordPasskeyInput" placeholder="Passkey (e.g. REVO-123456)" 
-                                   class="w-full bg-[#262626] border rev-border rounded px-3 py-2 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none text-center font-mono">
-                            
-                            <button onclick="verifyDiscordCredentials()" class="mt-2 w-full bg-zinc-200 hover:bg-white text-zinc-900 text-xs font-bold uppercase px-4 py-2 rounded tracking-wider cursor-pointer active:scale-95 transition-all">
-                                Access Trading Hub
-                            </button>
-                        </div>
-                        <div id="verifyError" class="text-[10px] text-red-400 font-mono mt-3 hidden"></div>
+                        <input type="text" id="discordUsernameInput" placeholder="Discord Username" class="w-full max-w-xs bg-[#262626] border rev-border rounded px-3 py-2 text-xs text-zinc-200 mb-2 text-center font-mono">
+                        <input type="password" id="discordPasskeyInput" placeholder="Passkey" class="w-full max-w-xs bg-[#262626] border rev-border rounded px-3 py-2 text-xs text-zinc-200 mb-2 text-center font-mono">
+                        <button onclick="verifyDiscordCredentials()" class="w-full max-w-xs bg-zinc-200 hover:bg-white text-zinc-900 text-xs font-bold uppercase px-4 py-2 rounded">Access Hub</button>
                     </div>
-
                     <div id="revsimChatCard" class="hidden space-y-4">
-                        <div class="bg-[#1a1a1a] p-4 rounded border rev-border max-h-64 overflow-y-auto space-y-2 font-mono text-xs" id="chatLogsContainer">
-                            <div class="text-zinc-600 italic text-center py-4">Connecting to live cloud feed...</div>
-                        </div>
-
-                        <div class="bg-[#1e1e1e] p-3 rounded border rev-border flex items-center gap-2">
-                            <span id="chatSenderBadge" class="text-[10px] bg-zinc-800 border border-zinc-700 px-2 py-1 rounded text-zinc-300 font-mono font-bold truncate max-w-[140px]">User</span>
-                            <input type="text" id="chatMessageInput" placeholder="Type your trade offer here... (Press Enter to Post)" 
-                                   class="flex-1 bg-[#121212] border rev-border rounded px-3 py-2 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none">
-                            <button onclick="submitNativeMessage()" class="bg-zinc-300 hover:bg-white text-zinc-950 font-black text-xs uppercase px-4 py-2 rounded transition-all active:scale-95 cursor-pointer">
-                                Post
-                            </button>
+                        <div class="bg-[#1a1a1a] p-4 rounded border rev-border max-h-64 overflow-y-auto font-mono text-xs" id="chatLogsContainer"></div>
+                        <div class="flex gap-2">
+                            <input type="text" id="chatMessageInput" placeholder="Post trade..." class="flex-1 bg-[#121212] border rev-border rounded px-3 py-2 text-xs text-zinc-200">
+                            <button onclick="submitNativeMessage()" class="bg-zinc-300 text-zinc-950 font-black text-xs uppercase px-4 py-2 rounded">Post</button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
     </div>
 
-    <div id="detailSection" class="hidden max-w-5xl mx-auto p-4 pt-6 transition-all duration-300 ease-in-out transform translate-y-4 opacity-0">
-        <button onclick="goHome()" class="mb-4 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-all duration-200 flex items-center gap-1 cursor-pointer hover:-translate-x-1">
-            ← Back to Item Values
-        </button>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="md:col-span-1 rev-dark border rev-border rounded p-4 flex flex-col items-center justify-center shadow-lg">
-                <div class="w-full bg-[#161616] border rev-border rounded-lg aspect-square flex items-center justify-center mb-4 p-4 shadow-inner group">
-                    <div id="itemPageAcronymImg" class="text-4xl font-mono font-black tracking-tight text-zinc-600 uppercase select-none group-hover:scale-110 transition-transform duration-300"></div>
-                </div>
-                <h2 id="itemPageName" class="text-lg font-black text-white text-center leading-tight">Item Name</h2>
-                <span id="itemPageAcronym" class="mt-1 font-mono text-xs px-2 py-0.5 bg-[#161616] border rev-border text-zinc-400 rounded uppercase"></span>
-            </div>
-
-            <div class="md:col-span-2 space-y-4">
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center hover:bg-[#2d2d2d] transition-colors duration-200">
-                        <div class="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Item Value</div>
-                        <div id="itemPageValue" class="text-sm font-mono font-black text-zinc-200 mt-1">Priceless</div>
-                    </div>
-                    <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center hover:bg-[#2d2d2d] transition-colors duration-200">
-                        <div class="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Market Demand</div>
-                        <div id="itemPageDemand" class="text-sm font-mono font-bold text-zinc-300 mt-1">High</div>
-                    </div>
-                    <div class="bg-[#262626] border border-zinc-800 p-3 rounded shadow text-center hover:bg-[#2d2d2d] transition-colors duration-200">
-                        <div class="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Economy Trend</div>
-                        <div id="itemPageTrend" class="text-sm font-mono font-bold text-zinc-300 mt-1">Stable</div>
-                    </div>
-                </div>
-
-                <div class="rev-dark border rev-border rounded p-4 shadow-lg">
-                    <h3 class="text-xs uppercase font-extrabold tracking-widest text-zinc-400 mb-3 flex items-center gap-1.5">
-                        <span>📊</span> Historical Value Index
-                    </h3>
-                    <div class="h-48 w-full relative">
-                        <canvas id="valueChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="rev-dark border rev-border rounded p-5 shadow-lg">
-                    <h3 class="text-xs uppercase font-extrabold tracking-widest text-zinc-400 border-b rev-border pb-2 mb-3">Item Biography & Market Analysis</h3>
-                    <p id="itemPageReason" class="text-xs text-zinc-300 leading-relaxed font-sans bg-[#161616] border rev-border p-4 rounded-lg shadow-inner">
-                        Biography content node.
-                    </p>
-                </div>
-            </div>
+    <div id="detailSection" class="hidden max-w-5xl mx-auto p-4 pt-6">
+        <button onclick="goHome()" class="text-xs font-bold text-zinc-400">← Back</button>
+        <div id="itemDetailContent" class="mt-6">
+            <h2 id="itemPageName" class="text-2xl font-black"></h2>
+            <div id="itemPageValue" class="text-zinc-400"></div>
+            <canvas id="valueChart" class="mt-4"></canvas>
         </div>
     </div>
 
-    <footer class="text-center py-12 text-xs text-zinc-600 font-mono tracking-tight">
-        © 2026 Revomons
-    </footer>
-
     <script>
-        let chartInstance = null;
-        let verifiedRevsimUser = null;
-        let _supabaseClient = null;
-
-        // ⚙️ INITIALIZE SUPABASE
         const SUPABASE_URL = "https://uuhtviecltmgsaaoinyy.supabase.co"; 
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1aHR2aWVjbHRtZ3NhYW9pbnl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NDgwODgsImV4cCI6MjA5ODIyNDA4OH0.DfM0PTYgdpRg3F6UjrgOuBIDZTKp_cuv1ZJKESVTz2Q"; // Ensure your correct public anon key is pasted here!
+        const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE"; 
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let allItems = [];
 
-        const itemsList = [
-            { 
-                name: "The Ice Crown", 
-                acronym: "IC", 
-                value: "10,000", 
-                demand: "Unknown/High", 
-                trend: "Unknown/Stable", 
-                reason: "Giveaway item (For Now 👀), Tradeable, only One Owner",
-                history: [100, 100, 100, 100, 10000]
-            }
-        ];
-
-        // Safe Database Instance Builder
-        try {
-            if (SUPABASE_URL && !SUPABASE_URL.includes("YOUR_PROJECT_ID")) {
-                _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log("🚀 Supabase network engine active.");
-            }
-        } catch (err) {
-            console.error("❌ Link setup issue: ", err);
+        async function fetchCatalog() {
+            const { data, error } = await supabase.from('items').select('*');
+            if (error) { console.error(error); return; }
+            allItems = data || [];
+            document.getElementById("itemCount").innerText = allItems.length;
+            renderCatalog(allItems);
         }
 
-        // Live Cloud Whitelist Query Matching from Discord Bot Registration
-        async function verifyDiscordCredentials() {
-            const userInput = document.getElementById("discordUsernameInput").value.trim().toLowerCase();
-            const passkeyInput = document.getElementById("discordPasskeyInput").value.trim();
-            const errorDiv = document.getElementById("verifyError");
-            
-            if(!userInput || !passkeyInput) {
-                showError("Both fields are mandatory to access the interface.");
-                return;
-            }
-
-            if (!_supabaseClient) {
-                showError("Database instance offline. Check configurations.");
-                return;
-            }
-
-            try {
-                // Array check format prevents structural lookup rejections
-                const { data, error } = await _supabaseClient
-                    .from('whitelist')
-                    .select('*')
-                    .eq('username', userInput)
-                    .eq('passkey', passkeyInput);
-
-                if (error) {
-                    console.error("Supabase Database Error Details:", error);
-                    showError(`Database error: ${error.message}`);
-                    return;
-                }
-
-                if (!data || data.length === 0) {
-                    showError("Access Denied: Combination not found in system storage.");
-                    return;
-                }
-                
-                errorDiv.classList.add("hidden");
-                verifiedRevsimUser = `@${userInput}`;
-                
-                document.getElementById("revsimLockCard").classList.add("hidden");
-                document.getElementById("revsimChatCard").classList.remove("hidden");
-                
-                const statusTag = document.getElementById("verificationStatusTag");
-                statusTag.innerText = `Connected: ${verifiedRevsimUser}`;
-                statusTag.className = "text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-green-950 text-green-400 border border-green-900";
-                
-                document.getElementById("chatSenderBadge").innerText = verifiedRevsimUser;
-                
-                // Initialize trading feed pipelines
-                loadCloudMessages();
-                listenToLiveUpdates();
-            } catch (err) {
-                console.error("System Crash:", err);
-                showError("Network request drop.");
-            }
-        }
-
-        function showError(msg) {
-            const errorDiv = document.getElementById("verifyError");
-            errorDiv.innerText = msg;
-            errorDiv.classList.remove("hidden");
-        }
-
-        // Pull down message history layers
-        async function loadCloudMessages() {
-            if (!_supabaseClient) return;
-            
-            try {
-                const { data, error } = await _supabaseClient
-                    .from('market_chats')
-                    .select('*')
-                    .order('id', { ascending: true })
-                    .limit(40);
-                    
-                if (error) throw error;
-                renderMessagesToView(data || []);
-            } catch (err) {
-                console.error("Fetch failure:", err);
-                document.getElementById("chatLogsContainer").innerHTML = `<div class="text-red-400 text-center py-4">Failed to synchronize chat timeline.</div>`;
-            }
-        }
-
-        // Subscribe to live broadcast changes
-        function listenToLiveUpdates() {
-            if (!_supabaseClient) return;
-            
-            _supabaseClient
-                .channel('realtime_market')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'market_chats' }, payload => {
-                    loadCloudMessages();
-                })
-                .subscribe();
-        }
-
-        function renderMessagesToView(logs) {
-            const container = document.getElementById("chatLogsContainer");
-            
-            if(logs.length === 0) {
-                container.innerHTML = `<div class="text-zinc-600 italic text-center py-4">No active trading offers running.</div>`;
-                return;
-            }
-            
-            container.innerHTML = logs.map(msg => `
-                <div class="bg-[#222] p-2 rounded border border-zinc-800 flex flex-col gap-1">
-                    <div class="flex justify-between items-center text-[10px]">
-                        <span class="text-zinc-400 font-bold">${msg.sender}</span>
-                        <span class="text-zinc-600">${msg.time}</span>
-                    </div>
-                    <div class="text-zinc-200 text-xs">${msg.text}</div>
+        function renderCatalog(items) {
+            document.getElementById("catalogGrid").innerHTML = items.map(item => `
+                <div onclick="navigateToItem('${item.name}')" class="rev-dark border rev-border rounded p-4 cursor-pointer hover:border-zinc-400">
+                    <div class="font-bold text-sm text-zinc-300 truncate">${item.name}</div>
+                    <div class="text-xs text-zinc-500 mt-2">Value: ${item.value}</div>
                 </div>
             `).join("");
-            container.scrollTop = container.scrollHeight;
         }
 
-        // Send a post record payload to Supabase
-        async function submitNativeMessage() {
-            const input = document.getElementById("chatMessageInput");
-            const textContent = input.value.trim();
-            if(!textContent || !verifiedRevsimUser || !_supabaseClient) return;
-            
-            const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            const { error } = await _supabaseClient
-                .from('market_chats')
-                .insert([
-                    { sender: verifiedRevsimUser, text: textContent, time: timestamp }
-                ]);
-                
-            if (error) {
-                alert("Database connection drop: Message rejected.");
-                return;
-            }
-            
-            input.value = "";
-        }
-
-        document.getElementById("chatMessageInput").addEventListener("keypress", function(e) {
-            if(e.key === 'Enter') submitNativeMessage();
-        });
-
-        // Interface render logic layout links
-        function renderCatalog(filteredItems) {
-            const grid = document.getElementById("catalogGrid");
-            grid.innerHTML = "";
-            if (filteredItems.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-xs font-mono text-zinc-500">No matching items found.</div>`;
-                return;
-            }
-            filteredItems.forEach((item) => {
-                grid.innerHTML += `
-                    <div onclick="navigateToItem('${item.acronym}')" 
-                         class="rev-dark border rev-border rounded shadow flex flex-col justify-between overflow-hidden cursor-pointer transform hover:-translate-y-1 hover:scale-[1.02] hover:border-zinc-400 hover:shadow-xl transition-all duration-300 ease-out group">
-                        <div class="rev-header px-3 py-1.5 border-b rev-border text-center font-bold text-xs text-zinc-400 group-hover:text-white group-hover:bg-[#3d3d3d] transition-all duration-200 truncate">
-                            ${item.name}
-                        </div>
-                        <div class="p-3 flex items-center justify-between gap-2 bg-[#222]/10">
-                            <div class="w-14 h-14 bg-[#1a1a1a] rounded border rev-border flex items-center justify-center text-zinc-500 font-mono text-xs font-bold uppercase group-hover:border-zinc-500 transition-colors duration-300">
-                                ${item.acronym}
-                            </div>
-                            <div class="flex-1 text-right space-y-0.5 font-mono text-xs">
-                                <div class="flex justify-between text-zinc-500 pl-4"><span>Value:</span> <span class="text-zinc-300 font-bold">${item.value}</span></div>
-                                <div class="flex justify-between text-zinc-500 pl-4"><span>Demand:</span> <span class="text-zinc-400">${item.demand}</span></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function buildGraph(itemHistoryData) {
-            const ctx = document.getElementById('valueChart').getContext('2d');
-            if (chartInstance) { chartInstance.destroy(); }
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Feb 2026', 'Mar 2026', 'Apr 2026', 'May 2026', 'Jun 2026'],
-                    datasets: [{
-                        label: 'Value Index',
-                        data: itemHistoryData,
-                        borderColor: '#a1a1aa',
-                        backgroundColor: 'rgba(161, 161, 170, 0.05)',
-                        borderWidth: 2,
-                        tension: 0.2,
-                        pointBackgroundColor: '#ffffff',
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { color: '#27272a' }, ticks: { color: '#71717a', font: { family: 'monospace', size: 10 } } },
-                        y: { grid: { color: '#27272a' }, ticks: { color: '#71717a', font: { family: 'monospace', size: 10 } } }
-                    }
-                }
-            });
-        }
-
-        function navigateToItem(acronym) {
-            const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?item=' + acronym;
-            window.history.pushState({ path: newUrl }, '', newUrl);
-            checkRouting();
+        function navigateToItem(name) {
+            const item = allItems.find(i => i.name === name);
+            if (!item) return;
+            document.getElementById("itemPageName").innerText = item.name;
+            document.getElementById("itemPageValue").innerText = "Value: " + item.value;
+            document.getElementById("catalogSection").classList.add("hidden");
+            document.getElementById("detailSection").classList.remove("hidden");
         }
 
         function goHome() {
-            const clearUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            window.history.pushState({ path: clearUrl }, '', clearUrl);
-            checkRouting();
+            document.getElementById("detailSection").classList.add("hidden");
+            document.getElementById("catalogSection").classList.remove("hidden");
         }
 
-        function checkRouting() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const itemQuery = urlParams.get('item');
-            const catalogSec = document.getElementById("catalogSection");
-            const detailSec = document.getElementById("detailSection");
-
-            if (itemQuery) {
-                const foundItem = itemsList.find(i => i.acronym.toLowerCase() === itemQuery.toLowerCase());
-                if (foundItem) {
-                    document.getElementById("itemPageName").innerText = foundItem.name;
-                    document.getElementById("itemPageAcronym").innerText = foundItem.acronym;
-                    document.getElementById("itemPageAcronymImg").innerText = foundItem.acronym;
-                    document.getElementById("itemPageValue").innerText = foundItem.value;
-                    document.getElementById("itemPageDemand").innerText = foundItem.demand;
-                    document.getElementById("itemPageTrend").innerText = foundItem.trend;
-                    document.getElementById("itemPageReason").innerText = foundItem.reason;
-
-                    catalogSec.classList.add("opacity-0", "-translate-y-4");
-                    setTimeout(() => {
-                        catalogSec.classList.add("hidden");
-                        detailSec.classList.remove("hidden");
-                        setTimeout(() => {
-                            detailSec.classList.remove("opacity-0", "translate-y-4");
-                            buildGraph(foundItem.history);
-                        }, 50);
-                    }, 200);
-                    window.scrollTo(0, 0);
-                    return;
-                }
+        // --- AUTH & CHAT LOGIC ---
+        async function verifyDiscordCredentials() {
+            const user = document.getElementById("discordUsernameInput").value.toLowerCase();
+            const key = document.getElementById("discordPasskeyInput").value;
+            const { data, error } = await supabase.from('whitelist').select('*').eq('username', user).eq('passkey', key);
+            
+            if (data && data.length > 0) {
+                document.getElementById("revsimLockCard").classList.add("hidden");
+                document.getElementById("revsimChatCard").classList.remove("hidden");
+            } else {
+                alert("Access Denied");
             }
-
-            detailSec.classList.add("opacity-0", "translate-y-4");
-            setTimeout(() => {
-                detailSec.classList.add("hidden");
-                catalogSec.classList.remove("hidden");
-                setTimeout(() => { catalogSec.classList.remove("opacity-0", "-translate-y-4"); }, 50);
-            }, 200);
         }
 
-        document.getElementById("searchBar").addEventListener("input", (e) => {
-            const searchString = e.target.value.toLowerCase();
-            const matchingItems = itemsList.filter(item => 
-                item.name.toLowerCase().includes(searchString) || item.acronym.toLowerCase().includes(searchString)
-            );
-            renderCatalog(matchingItems);
-        });
+        async function submitNativeMessage() {
+            const text = document.getElementById("chatMessageInput").value;
+            await supabase.from('market_chats').insert([{ sender: 'User', text: text }]);
+            document.getElementById("chatMessageInput").value = "";
+        }
 
-        window.addEventListener('popstate', checkRouting);
-        document.getElementById("itemCount").innerText = itemsList.length;
-        renderCatalog(itemsList);
-        checkRouting();
+        fetchCatalog();
     </script>
 </body>
 </html>
